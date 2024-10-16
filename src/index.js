@@ -1,16 +1,17 @@
-document.getElementById('contaForm').addEventListener('submit', function(event) {
+document.getElementById('paymentForm').addEventListener('submit', function(event) {
     event.preventDefault();
 
-    const numeroPessoas = parseInt(document.getElementById('numeroPessoas').value);
-    const valorTotal = parseFloat(document.getElementById('valorTotal').value);
-    const taxaServico = parseFloat(document.getElementById('taxaServico').value);
+    const mesaSelecionada = document.getElementById('mesa').value;
+    const numeroPessoas = parseInt(document.getElementById('numPessoas').value);
+    const valorTotal = parseFloat(document.getElementById('valorConta').value);
     const metodoPagamento = document.getElementById('metodoPagamento').value;
 
-    const valorComTaxa = valorTotal + (valorTotal * (taxaServico / 100));
+    // Supondo 10% de taxa
+    const valorComTaxa = valorTotal * 1.1; 
     const valorFinal = calcularValorComDesconto(valorComTaxa, metodoPagamento);
     const valorPorPessoa = valorFinal / numeroPessoas;
 
-    exibirResultado(numeroPessoas, valorTotal, taxaServico, metodoPagamento, valorFinal, valorPorPessoa);
+    exibirResultado(mesaSelecionada, numeroPessoas, valorTotal, valorComTaxa, valorFinal, valorPorPessoa);
 });
 
 function calcularValorComDesconto(valorTotal, metodoPagamento) {
@@ -21,16 +22,28 @@ function calcularValorComDesconto(valorTotal, metodoPagamento) {
     return valorTotal; // Sem desconto
 }
 
-function exibirResultado(numeroPessoas, valorTotal, taxaServico, metodoPagamento, valorFinal, valorPorPessoa) {
-    const resultadoDiv = document.getElementById('resultado');
-    resultadoDiv.classList.remove('hidden');
-    resultadoDiv.innerHTML = `
-        <h2>Resultado</h2>
-        <p>Número de pessoas na mesa: ${numeroPessoas}</p>
-        <p>Valor total da conta: R$${valorTotal.toFixed(2)}</p>
-        <p>Taxa de serviço: ${taxaServico.toFixed(2)}%</p>
-        <p>Forma de pagamento: ${metodoPagamento}</p>
-        <p>Valor total a ser pago (incluindo taxa): R$${valorFinal.toFixed(2)}</p>
-        <p>Valor por pessoa: R$${valorPorPessoa.toFixed(2)}</p>
-    `;
+function exibirResultado(mesaSelecionada, numeroPessoas, valorTotal, valorComTaxa, valorFinal, valorPorPessoa) {
+    document.getElementById('resultadoMesa').innerText = `Selecionada: ${mesaSelecionada} `;
+    document.getElementById('resultadoPessoas').innerText = numeroPessoas;
+    document.getElementById('resultadoTotal').innerText = valorTotal.toFixed(2);
+    document.getElementById('resultadoTaxa').innerText = valorComTaxa.toFixed(2);
+    document.getElementById('resultadoFinal').innerText = valorFinal.toFixed(2);
+    document.getElementById('resultadoPorPessoa').innerText = valorPorPessoa.toFixed(2);
+    
+    const modal = document.getElementById('modal');
+    modal.style.display = 'block'; // Mostra o modal
+}
+
+// Função para fechar o modal
+function fecharModal() {
+    const modal = document.getElementById('modal');
+    modal.style.display = 'none'; // Esconde o modal
+}
+
+// Fechar o modal ao clicar fora dele
+window.onclick = function(event) {
+    const modal = document.getElementById('modal');
+    if (event.target === modal) {
+        modal.style.display = 'none';
+    }
 }
